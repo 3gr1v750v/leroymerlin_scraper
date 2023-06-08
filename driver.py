@@ -1,5 +1,6 @@
 import json
 import time
+import random
 
 import undetected_chromedriver as uc
 
@@ -43,10 +44,16 @@ def urls_pull_list_collection(index_catalog, catalog):
 def pages_pull_objects_collection(catalog, safe_time, scraper_class, driver):
     """Создаём массив объектов с данными продуктов."""
     list_to_scrape = []
+    total_products = len(catalog.index_catalog)
 
-    for url in catalog.index_catalog[:3]:
+    counter = 0
+
+    for url in catalog.index_catalog:
         time.sleep(safe_time)
         list_to_scrape.append(scraper_class(url, driver))
+        counter += 1
+        print(f'\rProcessing {counter} of {total_products}', end="",
+              flush=True)
 
     return list_to_scrape
 
@@ -71,6 +78,8 @@ def main():
 
     safe_time: int = 5
     driver = uc.Chrome()
+
+    driver.set_window_size(800, 600)
 
     source_url = "https://leroymerlin.ru/catalogue/parketnye-laki/"
 

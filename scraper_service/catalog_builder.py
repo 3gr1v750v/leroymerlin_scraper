@@ -16,7 +16,7 @@ class Catalog:
         products = soup.findAll("div", class_="phytpj4_plp largeCard")
         for product in products:
             result = product.find("a").get("href")
-            product_url = f"https://leroymerlin.ru/{result}"
+            product_url = f"https://leroymerlin.ru{result}/"
             self.index_catalog.append(product_url)
 
     @property

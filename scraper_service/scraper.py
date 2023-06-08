@@ -22,10 +22,10 @@ class Scraper:
         # Ожидание прогрузки страницы до определенного элемента
         # У страницы индекса и продукта они разные
 
-        timeout = 1
+        timeout = 5
         if "product" in self.url:
             element_present = EC.presence_of_element_located(
-                (By.ID, "complements")
+                (By.ID, "reviews")
             )
         else:
             element_present = EC.presence_of_element_located(
