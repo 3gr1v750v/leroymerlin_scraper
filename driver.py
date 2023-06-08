@@ -1,6 +1,5 @@
 import json
 import time
-import random
 
 import undetected_chromedriver as uc
 
@@ -21,13 +20,13 @@ def initial_object_collection(source_url, driver):
 
 
 def urls_pull_object_collection(
-    total_pages, safe_time, source_url, index_catalog, scraper_class, driver
+    total_pages, delay_time, source_url, index_catalog, scraper_class, driver
 ):
     """Создаём массив из объектов с данными индекса страниц."""
     pattern = "{}?page={}"
 
     for pagination in range(2, total_pages + 1):
-        time.sleep(safe_time)
+        time.sleep(delay_time)
         url = pattern.format(str(source_url), str(pagination))
         index_catalog.append(scraper_class(url, driver))
 
@@ -41,7 +40,7 @@ def urls_pull_list_collection(index_catalog, catalog):
         catalog.index_catalog_builder(html.soup)
 
 
-def pages_pull_objects_collection(catalog, safe_time, scraper_class, driver):
+def pages_pull_objects_collection(catalog, delay_time, scraper_class, driver):
     """Создаём массив объектов с данными продуктов."""
     list_to_scrape = []
     total_products = len(catalog.index_catalog)
@@ -49,11 +48,12 @@ def pages_pull_objects_collection(catalog, safe_time, scraper_class, driver):
     counter = 0
 
     for url in catalog.index_catalog:
-        time.sleep(safe_time)
+        time.sleep(delay_time)
         list_to_scrape.append(scraper_class(url, driver))
         counter += 1
-        print(f'\rProcessing {counter} of {total_products}', end="",
-              flush=True)
+        print(
+            f"\rProcessing {counter} of {total_products}", end="", flush=True
+        )
 
     return list_to_scrape
 
@@ -76,7 +76,7 @@ def json_generator(json_builder):
 def main():
     """Основной драйвер проекта."""
 
-    safe_time: int = 5
+    delay_time: int = 5
     driver = uc.Chrome()
 
     driver.set_window_size(800, 600)
@@ -86,7 +86,7 @@ def main():
     total_pages, index_catalog = initial_object_collection(source_url, driver)
 
     full_catalog = urls_pull_object_collection(
-        total_pages, safe_time, source_url, index_catalog, Scraper, driver
+        total_pages, delay_time, source_url, index_catalog, Scraper, driver
     )
 
     catalog = Catalog()
@@ -94,7 +94,7 @@ def main():
     urls_pull_list_collection(full_catalog, catalog)
 
     list_to_scrape = pages_pull_objects_collection(
-        catalog, safe_time, Scraper, driver
+        catalog, delay_time, Scraper, driver
     )
 
     json_builder = JsonBuilder()
@@ -106,7 +106,7 @@ def main():
     driver.close()
     driver.quit()
 
-    print("Данные сохранены в .json фаил.")
+    print("\rДанные сохранены в .json фаил.")
 
 
 if __name__ == "__main__":
